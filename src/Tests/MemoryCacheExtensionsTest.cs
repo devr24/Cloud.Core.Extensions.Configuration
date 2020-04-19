@@ -7,10 +7,11 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace Cloud.Core.Configuration.Tests
 {
+    [IsUnit]
     public class MemoryCacheExtensionsTest
     {
-        [Fact, IsUnit]
-        public void Test_UseKubernetesContainerConfig()
+        [Fact]
+        public void Test_MemoryCache_GetOrBuild()
         {
             IMemoryCache cache = new MemoryCache(new MemoryCacheOptions());
 

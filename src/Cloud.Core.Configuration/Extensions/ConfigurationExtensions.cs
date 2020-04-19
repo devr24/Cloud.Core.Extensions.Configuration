@@ -1,8 +1,7 @@
-﻿namespace Cloud.Core.Configuration.Extensions
+﻿namespace Microsoft.Extensions.Configuration
 {
     using System.IO;
     using System;
-    using Microsoft.Extensions.Configuration;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -19,24 +18,28 @@
         public static IConfigurationBuilder AddKubernetesSecrets(this IConfigurationBuilder builder, string path = null, bool optional = true)
         {
             if (path == null)
+            {
                 path = "/etc/secrets";
+            }
 
             // Default return if we cant find this folder to avoid runtime errors.  Worst case scenario
             // is that the settings are not loaded from here.
-            if (Directory.Exists(path) == false)
+            if (!Directory.Exists(path))
+            {
                 return builder;
+            }
 
             return builder.AddKeyPerFile(path, optional);
         }
 
         /// <summary>
-        /// Uses the desired docker container configuration for Kubernetes deployments.
-        /// Builds config in the following order:
+        /// Uses the desired Robert McCabe configurations.
+        /// Builds configuration sources in the following order:
         /// - Kubernetes Secrets (looks in the "secrets" folder)
         /// - Environment variables
-        /// - Json file (AppSettings.json)
         /// - Command line arguments
-        /// NOTE:  The order of this may have to change for real world usage - this is a best of priority guess for now.
+        /// - Json file (appsettings.json, followed by appsettings.dev.json)
+        /// Note: appsettings.dev.json WILL override appsettings.json file settings, as it is only to be used for dev scenarios.
         /// </summary>
         /// <param name="builder">The configuration builder to bind to.</param>
         /// <param name="appSettingsPath">The application settings path.</param>
@@ -44,25 +47,98 @@
         /// <returns>
         /// The configuration builder after config has been added.
         /// </returns>
-        public static IConfigurationBuilder UseKubernetesContainerConfig(this IConfigurationBuilder builder, 
-            string appSettingsPath = "appSettings.json", string kubernetesSecretsPath = null)
+        public static IConfigurationBuilder UseDefaultConfigs(this IConfigurationBuilder builder,
+            string appSettingsPath = "appsettings.json", string kubernetesSecretsPath = null)
         {
             builder.AddKubernetesSecrets(kubernetesSecretsPath)
                 .AddEnvironmentVariables()
                 .AddCommandLine(Environment.GetCommandLineArgs());
 
             if (!string.IsNullOrEmpty(appSettingsPath))
+            {
                 builder.AddJsonFile(appSettingsPath, true);
-
-            builder.AddJsonFile("appSettings.dev.json", true);
+            }
 
             var env = Environment.GetEnvironmentVariable("ENVIRONMENT");
             if (!string.IsNullOrEmpty(env))
-                builder.AddJsonFile($"appSettings.{env}.json", true, true);
+            {
+                builder.AddJsonFile($"appsettings.{env}.json", true, true);
+            }
 
             return builder;
         }
-        
+
+        /// <summary>
+        /// Gets the base config as a "section".
+        /// </summary>
+        /// <param name="config">The configuration.</param>
+        /// <returns>IConfigurationSection.</returns>
+        public static IConfigurationSection GetBaseSection(this IConfiguration config)
+        {
+            var configBase = new ConfigurationBuilder();
+            configBase.AddInMemoryCollection(config.GetChildren().Where(c => c.Value != null).Select(c => new KeyValuePair<string, string>("base:" + c.Key, c.Value)));
+            return configBase.Build().GetSection("base");
+        }
+
+        /// <summary>
+        /// Add key/value to config builder.
+        /// </summary>
+        /// <param name="builder">Builder to extend.</param>
+        /// <param name="key">Key for value being added.</param>
+        /// <param name="value">Value to add.</param>
+        /// <returns>Builder with key/value added.</returns>
+        public static IConfigurationBuilder AddValue(this IConfigurationBuilder builder, string key, string value)
+        {
+            return builder.AddInMemoryCollection(new List<KeyValuePair<string, string>> {
+                new KeyValuePair<string, string>(key, value)
+            });
+        }
+
+        /// <summary>
+        /// Add enumerable list of config values.
+        /// </summary>
+        /// <param name="builder">Builder to extend.</param>
+        /// <param name="values">List of values to add.</param>
+        /// <returns>Builder with values added.</returns>
+        public static IConfigurationBuilder AddValues(this IConfigurationBuilder builder, IEnumerable<KeyValuePair<string, string>> values)
+        {
+            return builder.AddInMemoryCollection(values);
+        }
+
+        /// <summary>
+        /// Get all settings as a string representation.
+        /// </summary>
+        /// <param name="builder">Builder to extend.</param>
+        /// <returns>String representation of settings.</returns>
+        public static string GetAllSettingsAsString(this IConfigurationBuilder builder)
+        {
+            return builder.Build().GetAllSettingsAsString();
+        }
+
+        /// <summary>
+        /// Binds the base section of the config to an actual class of type T.
+        /// </summary>
+        /// <param name="config">The configuration.</param>
+        /// <returns>IConfigurationSection.</returns>
+        public static T BindBaseSection<T>(this IConfiguration config)
+        {
+            var configBase = new ConfigurationBuilder();
+            configBase.AddInMemoryCollection(config.GetChildren().Where(c => c.Value != null).Select(c => new KeyValuePair<string, string>("base:" + c.Key, c.Value)));
+            return configBase.Build().GetSection("base").Get<T>();
+        }
+
+        /// <summary>
+        /// Extension to grab values from existing configs during the build process.
+        /// </summary>
+        /// <typeparam name="T">Type of config object being pulled.</typeparam>
+        /// <param name="builder">The builder being extended.</param>
+        /// <param name="key">The key for the config value to search for.</param>
+        /// <returns>T config value.</returns>
+        public static T GetValue<T>(this IConfigurationBuilder builder, string key)
+        {
+            return builder.Build().GetValue<T>(key);
+        }
+
         /// <summary>
         /// Gets all key values as a list of KeyValuePairs.
         /// </summary>
@@ -72,6 +148,27 @@
         public static KeyValuePair<string, string>[] GetAllSettings(this IConfiguration rootConfig, Type[] providersToSkip = null)
         {
             return rootConfig.InternalGetAllKeyValues(providersToSkip);
+        }
+
+        /// <summary>
+        /// Gets value from config based on key.
+        /// </summary>
+        /// <param name="config">The configuration to get value from.</param>
+        /// <param name="key">The unique key which holds the wanted value.</param>
+        /// <param name="value">Out variable which returns found value if present.</param>
+        /// <returns>bool, true or false depending on if the value associated with the key could be found.</returns>
+        public static bool TryGetValue<T>(this IConfiguration config, string key, out T value)
+        {
+            if (key == null)
+                key = "";
+
+            value = config.GetValue<T>(key);
+            if (value == null)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -87,7 +184,9 @@
             {
                 // If this is the provider node, format appropriately.
                 if (s.Key == "PROV")
+                {
                     return s.Value;
+                }
 
                 // Otherwise, tab the KeyValue format and return.
                 return $"   [{s.Key}]: {s.Value}";
@@ -112,13 +211,15 @@
             // If providers have been configured, then build the flattened list of settings.
             if (rootConfig is ConfigurationRoot configRoot && configRoot.Providers != null)
             {
-                foreach (IConfigurationProvider provider in configRoot.Providers.Where(p => providersToSkip == null || !providersToSkip.Contains(p.GetType())))
+                foreach (var provider in configRoot.Providers.Where(p => providersToSkip == null || !providersToSkip.Contains(p.GetType())))
                 {
                     var settingKeys = GetKeyNames(new List<string>(), provider, null);
 
                     // If providers are to be included AND there are settings, add the provider node.
                     if (includeProviders && settingKeys.Count > 0)
+                    {
                         prov.Add(new KeyValuePair<string, string>("PROV", $"{Environment.NewLine}{provider.GetType().Name} [{settingKeys.Count} setting(s)]"));
+                    }
 
                     // Append each config value, using the keys to identity each.
                     foreach (var settingKey in settingKeys)
@@ -154,21 +255,36 @@
                 var hasChildren = provider.GetChildKeys(new List<string>(), newPath).Any();
                 if (hasChildren)
                 {
-                    if (!keyList.Contains(newPath)) // Ensure keys are unique before adding new key.
-                    {
-                        var kvConfigs = GetKeyNames(keyList, provider, newPath);
-                        foreach (var kv in kvConfigs)
-                        {
-                            if (keyList.Contains(kv) == false)
-                                keyList.Add(kv);
-                        }
-                    }
+                    AddKeys(keyList, newPath, provider);
                 }
                 else
+                {
                     keyList.Add(newPath);
+                }
             }
 
             return keyList;
+        }
+
+        /// <summary>
+        /// Add a path to the list if it doesn't yet exist in the list
+        /// </summary>
+        /// <param name="keyList">The key list built with the unique keys.</param>
+        /// <param name="newPath">The path to the build config</param>
+        /// <param name="provider">The provider to build config from.</param>
+        private static void AddKeys(List<string> keyList, string newPath, IConfigurationProvider provider)
+        {
+            if (!keyList.Contains(newPath)) // Ensure keys are unique before adding new key.
+            {
+                var kvConfigs = GetKeyNames(keyList, provider, newPath);
+                foreach (var kv in kvConfigs)
+                {
+                    if (!keyList.Contains(kv))
+                    {
+                        keyList.Add(kv);
+                    }
+                }
+            }
         }
     }
 }
