@@ -12,16 +12,16 @@ Factory extensions to IConfiguration to enable configuration to use Kubernetes s
 You can explicitly add the Kubernetes secret configs as follows:
 
 ```csharp
-  builder
-    .AddJsonFile("appSettings.json", true)
-    .AddKubernetesSecrets()
-    .Build();
+builder
+   .AddJsonFile("appSettings.json", true)
+   .AddKubernetesSecrets()
+   .Build();
 ```
 
 Or you can just use the extension we've build, `UseDefaultConfigs`, as follows:
 
 ```csharp
-  builder.UseDefaultConfigs().Build();
+builder.UseDefaultConfigs().Build();
 ```
 
 Using this second method will add all configuration in the following order:
@@ -40,15 +40,15 @@ in this way will overwrite json file configs.
 Extensions have been created to allow values to be added to the builder collection before being built.  Individually, as follows:
 
 ```csharp
-  builder.AddValue("MyKey", "MyValue");
+builder.AddValue("MyKey", "MyValue");
 ```
 
 Or as a collection of KeyValuePair's (`IEnumerable<KeyValuePair<string, string>>`), as follows:
 
 ```csharp
-   builder.AddValues(new List<KeyValuePair<string, string>> {
-             new KeyValuePair<string, string>("testKey", "testVal")
-        });
+builder.AddValues(new List<KeyValuePair<string, string>> {
+     new KeyValuePair<string, string>("testKey", "testVal")
+});
 ```
 
 ### Reading Values - IConfigurationBuilder/IConfiguration
@@ -56,28 +56,28 @@ Or as a collection of KeyValuePair's (`IEnumerable<KeyValuePair<string, string>>
 Extensions have been added to allow values to be read from the builder before it's been built.  Individually, as follows:
 
 ```csharp
-   var configVal = builder.GetValue<int>("MyIntExample");
+var configVal = builder.GetValue<int>("MyIntExample");
 ```
 
 Or gather all configured settings before being built:
 
 ```csharp
-   var allSettings = builder.GetAllSettingsAsString();
+var allSettings = builder.GetAllSettingsAsString();
 ```
 
 The equilivent for a build Configuration Builder (IConfiguration) would then be:
 
 ```csharp
-    var config = builder.Build();
-	var allSettings = config.GetAllSettings(); // as collection of values
-	var allSettingsString = config.GetAllSettingsAsString(); // as outputable string
+var config = builder.Build();
+var allSettings = config.GetAllSettings(); // as collection of values
+ allSettingsString = config.GetAllSettingsAsString(); // as outputable string
 ```
 
 An extension has been added to IConfiguration for attempting to get values:
 
 ```csharp
-    var config = builder.Build();
-	var success = config.TryGetValue<int>("MyIntKey", out var myInt);
+var config = builder.Build();
+var success = config.TryGetValue<int>("MyIntKey", out var myInt);
 ```
 
 ### Binding Configuration
@@ -85,8 +85,8 @@ An extension has been added to IConfiguration for attempting to get values:
 IConfiguration can only be bound to a type class when using the GetSection<T> call.  Meaning it has to be bound to a sub section of the config file, rather than the base section.  It's sometimes useful to bind the base section values to a typed class.  It can therefore be done as follows:
 
 ```csharp
-    var config = builder.Build();
-    var myTypedInstance = config.BindBaseSection<AppSettings>();
+var config = builder.Build();
+var myTypedInstance = config.BindBaseSection<AppSettings>();
 ```
 
 ### IMemoryCache GetOrBuild
@@ -94,15 +94,15 @@ IConfiguration can only be bound to a type class when using the GetSection<T> ca
 An extension method that allows a memory cache item to be gathered from in memory cache or, if it does not already exist, to build and store the item.
 
 ```csharp
-    IMemoryCache cache = new MemoryCache(new MemoryCacheOptions());
+IMemoryCache cache = new MemoryCache(new MemoryCacheOptions());
 
-    var cacheMe = "my cached piece of text";
+var cacheMe = "my cached piece of text";
 
-    // Will not exist already, therefore will build it.
-    var cachedItem = cache.GetOrBuild("key", () => cacheMe, TimeSpan.FromMinutes(30));
+// Will not exist already, therefore will build it.
+var cachedItem = cache.GetOrBuild("key", () => cacheMe, TimeSpan.FromMinutes(30));
 	
-	// Will just get the previously cached item.
-	cachedItem = cache.Get("key");
+ Will just get the previously cached item.
+ = cache.Get("key");
 ```
 
 An additional `Contains` method has also been added for convenience when checking if an item already exists in cache.
