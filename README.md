@@ -1,5 +1,5 @@
-# **Cloud.Core.Extensions.Configuration** 
-
+# **Cloud.Core.Extensions.Configuration**
+[![Build status](https://dev.azure.com/cloudcoreproject/CloudCore/_apis/build/status/Cloud.Core%20Packages/Cloud.Core.Extensions.Configuration_Package)](https://dev.azure.com/cloudcoreproject/CloudCore/_build/latest?definitionId=6)
 ![Code Coverage](https://cloud1core.blob.core.windows.net/codecoveragebadges/Cloud.Core.Extensions.Configuration-LineCoverage.png) 
 [![Cloud.Core.Extensions.Configuration package in Cloud.Core feed in Azure Artifacts](https://feeds.dev.azure.com/cloudcoreproject/dfc5e3d0-a562-46fe-8070-7901ac8e64a0/_apis/public/Packaging/Feeds/8949198b-5c74-42af-9d30-e8c462acada6/Packages/396a2077-073e-4795-b3f7-da67c254ce30/Badge)](https://dev.azure.com/cloudcoreproject/CloudCore/_packaging?_a=package&feed=8949198b-5c74-42af-9d30-e8c462acada6&package=396a2077-073e-4795-b3f7-da67c254ce30&preferRelease=true)
 
