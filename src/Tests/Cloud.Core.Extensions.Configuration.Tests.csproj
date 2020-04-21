@@ -5,7 +5,7 @@
     <IsPackable>false</IsPackable>
     <Authors>Robert McCabe</Authors>
     <Company>Robert McCabe</Company>
-    <Description>Unit tests for Cloud.Core.Configuration package.</Description>
+    <Description>Unit tests for Cloud.Core.Extensions.Configuration package.</Description>
     <Copyright>Robert McCabe</Copyright>
   </PropertyGroup>
 
@@ -29,7 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Cloud.Core.Configuration\Cloud.Core.Configuration.csproj" />
+    <ProjectReference Include="..\Cloud.Core.Extensions.Configuration\Cloud.Core.Extensions.Configuration.csproj" />
   </ItemGroup>
 
   <ItemGroup>

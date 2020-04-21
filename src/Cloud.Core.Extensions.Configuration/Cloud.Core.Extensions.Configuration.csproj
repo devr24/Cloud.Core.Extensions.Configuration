@@ -4,9 +4,9 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <Company>Robert McCabe</Company>
     <IsPackable>true</IsPackable>
-    <PackageId>Cloud.Core.Configuration</PackageId>
+    <PackageId>Cloud.Core.Extensions.Configuration</PackageId>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <PackageTags>Cloud.Core.Configuration .net-Core Core Configuration</PackageTags>
+    <PackageTags>Cloud.Core.Extensions.Configuration .net-Core Core Configuration</PackageTags>
     <PackageReleaseNotes />
     <Description>Extensions for configuration building, such as adding Kubernetes secrets to the Configuration builder.</Description>
     <Copyright>Aylesbury Solutions Ltd</Copyright>
@@ -14,7 +14,7 @@
     <PackageIconUrl>https://cloud1core.blob.core.windows.net/icons/CC.png</PackageIconUrl>
     <Authors>Robert McCabe</Authors>
     <ProjectGuid>{E4FBB09C-EECE-424D-8C14-7576E3D45D4C}</ProjectGuid>
-    <RepositoryUrl>https://github.com/rmccabe24/Cloud.Core.Configuration</RepositoryUrl>
+    <RepositoryUrl>https://github.com/rmccabe24/Cloud.Core.Extensions.Configuration</RepositoryUrl>
     <RepositoryType>Private</RepositoryType>
   </PropertyGroup>
 
