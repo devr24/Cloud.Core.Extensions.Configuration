@@ -11,11 +11,11 @@
     <Description>Extensions for configuration building, such as adding Kubernetes secrets to the Configuration builder.</Description>
     <Copyright>Robert McCabe</Copyright>
     <Version>3.1</Version>
-	<PackageIconUrl>https://cloud1core.blob.core.windows.net/icons/CC.png</PackageIconUrl>
+    <PackageIconUrl>https://cloud1core.blob.core.windows.net/icons/CC.png</PackageIconUrl>
     <Authors>Robert McCabe</Authors>
     <ProjectGuid>{E4FBB09C-EECE-424D-8C14-7576E3D45D4C}</ProjectGuid>
-	<RepositoryUrl>https://github.com/rmccabe24/Cloud.Core.Configuration</RepositoryUrl>
-	<RepositoryType>Private</RepositoryType>
+    <RepositoryUrl>https://github.com/rmccabe24/Cloud.Core.Configuration</RepositoryUrl>
+    <RepositoryType>Private</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>
