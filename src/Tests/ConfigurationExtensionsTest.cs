@@ -8,7 +8,7 @@ using System.Linq;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration.EnvironmentVariables;
 
-namespace Cloud.Core.Configuration.Tests
+namespace Cloud.Core.Extensions.Configuration.Tests
 {
     [IsUnit]
     public class ConfigurationExtensionsTest : IDisposable
