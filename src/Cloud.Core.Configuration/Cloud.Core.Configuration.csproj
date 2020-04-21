@@ -9,7 +9,7 @@
     <PackageTags>Cloud.Core.Configuration .net-Core Core Configuration</PackageTags>
     <PackageReleaseNotes />
     <Description>Extensions for configuration building, such as adding Kubernetes secrets to the Configuration builder.</Description>
-    <Copyright>Robert McCabe</Copyright>
+    <Copyright>Aylesbury Solutions Ltd</Copyright>
     <Version>3.1</Version>
     <PackageIconUrl>https://cloud1core.blob.core.windows.net/icons/CC.png</PackageIconUrl>
     <Authors>Robert McCabe</Authors>
