@@ -133,8 +133,4 @@ https://pkgs.dev.azure.com/cloudcoreproject/CloudCore/_packaging/Cloud.Core/nuge
  
 For help setting up, follow this article: https://docs.microsoft.com/en-us/vsts/package/nuget/consume?view=vsts
 
-<div style="border:1px solid red;width:100%;margin-left:auto;margin-right:auto">
-
-<img style="border:1px solid red;width:100%;margin-left:auto;margin-right:auto" src="https://cloud1core.blob.core.windows.net/icons/icon_small.png" />
-
-</center>
+<img src="https://cloud1core.blob.core.windows.net/icons/cloud_core_small.PNG" />
