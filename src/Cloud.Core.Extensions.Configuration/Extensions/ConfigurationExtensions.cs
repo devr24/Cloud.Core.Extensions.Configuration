@@ -5,6 +5,9 @@
     using System.Collections.Generic;
     using System.Linq;
 
+    /// <summary>
+    /// Class Configuration extensions.
+    /// </summary>
     public static class ConfigurationExtensions
     {
         /// <summary>
@@ -33,7 +36,7 @@
         }
 
         /// <summary>
-        /// Uses the desired Robert McCabe configurations.
+        /// Uses the desired default configurations.
         /// Builds configuration sources in the following order:
         /// - Kubernetes Secrets (looks in the "secrets" folder)
         /// - Environment variables

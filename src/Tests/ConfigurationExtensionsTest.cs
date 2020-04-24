@@ -13,15 +13,8 @@ namespace Cloud.Core.Extensions.Configuration.Tests
     [IsUnit]
     public class ConfigurationExtensionsTest : IDisposable
     {
-        private class TestSettings
-        {
-            public string TestKey1 { get; set; }
-            public string TestKey2 { get; set; }
-        }
-
         public ConfigurationExtensionsTest()
         {
-            // Do "global" initialization here; Only called once.
             var currentDir = Directory.GetCurrentDirectory();
 
             // Method 1 - app settings.
@@ -31,6 +24,7 @@ namespace Cloud.Core.Extensions.Configuration.Tests
             File.WriteAllText(Path.Combine(currentDir, "TestKey2"), "testVal2");
         }
 
+        /// <summary>Ensure GetValue on the builder, returns the value as expected.</summary>
         [Fact]
         public void Test_ConfigBuilder_GetValue()
         {
@@ -48,92 +42,106 @@ namespace Cloud.Core.Extensions.Configuration.Tests
             lookupResult.Should().Be("testVal");
         }
 
+        /// <summary>Ensure using default configs loads all expected values.</summary>
         [Fact]
-        public void Test_UseDefaultConfigs()
+        public void Test_ConfigBuilder_UseDefaultConfigs()
         {
+            // Arrange
             IConfiguration configBuilder = new ConfigurationBuilder()
                 .UseDefaultConfigs("appsettings.json", Directory.GetCurrentDirectory())
                 .Build();
 
             var settings = configBuilder.Get<TestSettings>();
 
+            // Act/Assert
             Assert.True(configBuilder.GetAllSettings().Count(s => s.Key == "TestKey1")  == 1);
             Assert.NotNull(settings);
             Assert.NotNull(settings.TestKey1);
             Assert.NotNull(settings.TestKey2);
         }
 
+        /// <summary>Ensure TryGet returns expected value.</summary>
         [Fact]
-        public void Test_TryGetValueFromConfig()
+        public void Test_ConfigBuilder_TryGetValueFromConfig()
         {
             IConfiguration configBuilder = new ConfigurationBuilder()
                 .UseDefaultConfigs("appsettings.json", Directory.GetCurrentDirectory())
                 .Build();
 
+            // Act/Assert
             Assert.True(configBuilder.TryGetValue("TestKey1", out string value));
-
             Assert.True(value == "testVal1");
         }
 
+        /// <summary>Ensure wrong keys dont return values.</summary>
         [Fact]
-        public void Test_FailToGetValueFromConfigWithWrongKey()
+        public void Test_ConfigBuilder_FailToGetValueFromConfigWithWrongKey()
         {
+            // Arrange
             IConfiguration configBuilder = new ConfigurationBuilder()
                 .UseDefaultConfigs("appsettings.json", Directory.GetCurrentDirectory())
                 .Build();
 
+            // Act/Assert
             Assert.False(configBuilder.TryGetValue("WrongKey", out string value));
-
             Assert.True(value == null);
         }
 
-
+        /// <summary>Ensure trying to get a value using a null key returns false for TryGet.</summary>
         [Fact]
-        public void Test_FailToGetValueFromConfigWithNullKey()
+        public void Test_ConfigBuilder_FailToGetValueFromConfigWithNullKey()
         {
+            // Arrange
             IConfiguration configBuilder = new ConfigurationBuilder()
                 .UseDefaultConfigs("appsettings.json", Directory.GetCurrentDirectory())
                 .Build();
 
+            // Act/Assert
             Assert.False(configBuilder.TryGetValue(null, out string value));
-
             Assert.True(value == null);
         }
 
+        /// <summary>Ensure Use Default Builder with wrong paths still sets up the config with the right path.</summary>
         [Fact]
-        public void Test_UseDefaultConfigs_WrongPaths()
+        public void Test_ConfigBuilder_UseDefaultConfigsWrongPaths()
         {
+            // Arrange
             IConfiguration configBuilder = new ConfigurationBuilder()
                 .UseDefaultConfigs("madeUpSettings.json", "madeUpDir")
                 .Build();
 
+            // Act
             var settings = configBuilder.Get<TestSettings>();
 
+            // Assert
             Assert.NotNull(settings);
             Assert.Null(settings.TestKey1);
             Assert.Null(settings.TestKey2);
         }
 
+        /// <summary>Ensure using default config with no extra paths sets everything up as expected.</summary>
         [Fact]
-        public void Test_UseDefaultConfigs_NoPaths()
+        public void Test_ConfigBuilder_UseDefaultConfigsNoPaths()
         {
+            // Arrange
             IConfiguration configBuilder = new ConfigurationBuilder()
                 .UseDefaultConfigs(null)
                 .Build();
 
+            // Act
             var configString = configBuilder.GetAllSettingsAsString();
-            configString.Length.Should().BeGreaterThan(0);
-
             var configSkipped = configBuilder.GetAllSettingsAsString(new[] {typeof(EnvironmentVariablesConfigurationProvider)});
-            Assert.True(configSkipped.Length != configString.Length);
-
             var settings = configBuilder.Get<TestSettings>();
 
+            // Assert
+            Assert.True(configSkipped.Length != configString.Length);
+            configString.Length.Should().BeGreaterThan(0);
             Assert.NotNull(settings);
             Assert.Null(settings.TestKey1);
             Assert.Null(settings.TestKey2);
         }
 
+        /// <summary>Ensure builder converts to string as expected.</summary>
         [Fact]
         public void Test_ConfigBuilder_AsString()
         {
@@ -148,6 +156,7 @@ namespace Cloud.Core.Extensions.Configuration.Tests
             str.Length.Should().BeGreaterThan(0);
         }
 
+        /// <summary>Ensure add value, adds as expected.</summary>
         [Fact]
         public void Test_ConfigBuilder_AddValueExtension()
         {
@@ -162,6 +171,7 @@ namespace Cloud.Core.Extensions.Configuration.Tests
             lookupResult.Should().Be("testVal");
         }
 
+        /// <summary>Ensure add multiple values, adds as expected.</summary>
         [Fact]
         public void Test_ConfigBuilder_AddValuesExtension()
         {
@@ -185,7 +195,6 @@ namespace Cloud.Core.Extensions.Configuration.Tests
             lookupResult2.Should().Be("testVal2");
         }
 
-
         public void Dispose()
         {
             // Do "global" teardown here; Only called once.
@@ -196,6 +205,12 @@ namespace Cloud.Core.Extensions.Configuration.Tests
             
             // Unset method 2 - Kubernetes Secrets simulation.
             File.Delete(Path.Combine(currentDir, "TestKey2"));
+        }
+
+        private class TestSettings
+        {
+            public string TestKey1 { get; set; }
+            public string TestKey2 { get; set; }
         }
 
     }

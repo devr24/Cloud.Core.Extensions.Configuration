@@ -2,6 +2,9 @@
 {
     using System;
 
+    /// <summary>
+    /// Class Memory Cache extensions.
+    /// </summary>
     public static class MemoryCacheExtensions
     {
         /// <summary>
