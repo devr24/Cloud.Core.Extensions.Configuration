@@ -11,12 +11,20 @@
     <Description>Extensions for configuration building, such as adding Kubernetes secrets to the Configuration builder.</Description>
     <Copyright>Aylesbury Solutions Ltd</Copyright>
     <Version>3.1</Version>
+	<PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
     <PackageIconUrl>https://cloud1core.blob.core.windows.net/icons/CC.png</PackageIconUrl>
     <Authors>Robert McCabe</Authors>
     <ProjectGuid>{E4FBB09C-EECE-424D-8C14-7576E3D45D4C}</ProjectGuid>
     <RepositoryUrl>https://github.com/rmccabe24/Cloud.Core.Extensions.Configuration</RepositoryUrl>
     <RepositoryType>Private</RepositoryType>
     <DocumentationFile>Cloud.Core.Extensions.Configuration.xml</DocumentationFile>
+    <PackageReleaseNotes>
+	    Full API Documentation can be found here:
+	    https://cloud1core.blob.core.windows.net/docs/Cloud.Core.Extensions.Configuration/api/index.html
+    </PackageReleaseNotes>
+    <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
+    <PackageProjectUrl>https://dev.azure.com/cloudcoreproject/CloudCore/</PackageProjectUrl>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
   <ItemGroup>

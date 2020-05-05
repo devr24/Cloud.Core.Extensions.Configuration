@@ -50,9 +50,9 @@ namespace Cloud.Core.Extensions.Configuration.Tests
             IConfiguration configBuilder = new ConfigurationBuilder()
                 .UseDefaultConfigs("appsettings.json", Directory.GetCurrentDirectory())
                 .Build();
-
+            
             var settings = configBuilder.Get<TestSettings>();
-
+            
             // Act/Assert
             Assert.True(configBuilder.GetAllSettings().Count(s => s.Key == "TestKey1")  == 1);
             Assert.NotNull(settings);
