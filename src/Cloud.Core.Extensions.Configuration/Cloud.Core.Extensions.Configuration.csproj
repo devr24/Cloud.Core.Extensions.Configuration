@@ -21,7 +21,7 @@
 	    Full API Documentation can be found here:
 	    https://cloud1core.blob.core.windows.net/docs/Cloud.Core.Extensions.Configuration/api/index.html
     </PackageReleaseNotes>
-    <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
+	<PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://dev.azure.com/cloudcoreproject/CloudCore/</PackageProjectUrl>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>
