@@ -13,33 +13,42 @@ namespace Cloud.Core.Extensions.Configuration.Tests
     public class ConfigurationExtensionsTest
     {
         /// <summary>Ensure BindBaseSection on the IConfigurationBuilder, binds root appsettings to a model as expected.</summary>
-        [Fact, IsUnit]
+        [Fact]
         public void Test_ConfigBuilder_BindBaseSection()
         {
             // Arrange
-            var kubeSecretPath = Directory.GetCurrentDirectory();
             var configBuilder = new ConfigurationBuilder();
 
             // Act
-            configBuilder.UseDefaultConfigs("appsettings.json", kubeSecretPath);
+            configBuilder.AddValue("TestKey1", "testVal1")
+                .AddValue("TestKey2", "testVal2")
+                .AddValue("Test-Key-3", "testVal3")
+                .AddValue("Test-Key-4", "testVal4")
+                .AddValue("SubProp--SubKey1", "testVal1")
+                .AddValue("Sub-Prop--Sub-Key2", "testVal2");
             var boundConfig = configBuilder.Build().BindBaseSection<TestSettings>();
 
             // Assert
             boundConfig.TestKey1.Should().Be("testVal1");
             boundConfig.TestKey2.Should().Be("testVal2");
+            boundConfig.TestKey3.Should().Be("testVal3");
+            boundConfig.TestKey4.Should().Be("testVal4");
+            boundConfig.SubProp.Should().NotBeNull();
+            boundConfig.SubProp.SubKey1.Should().Be("testVal1");
+            boundConfig.SubProp.SubKey2.Should().Be("testVal2");
         }
 
         /// <summary>Ensure AddKubernetesSecrets on the IConfigurationBuilder, adds config from Kubernetes secrets as expected.</summary>
-        [Fact, IsUnit]
+        [Fact]
         public void Test_ConfigBuilder_AddKubernetesSecrets()
         {
             // Arrange
             var kubeSecretPath = Directory.GetCurrentDirectory();
             var configBuilder = new ConfigurationBuilder();
             configBuilder.AddInMemoryCollection(new List<KeyValuePair<string, string>>
-        {
-            new KeyValuePair<string, string>("testKey", "testVal")
-        });
+            {
+                new KeyValuePair<string, string>("testKey", "testVal")
+            });
 
             // Act
             configBuilder.AddKubernetesSecrets(kubeSecretPath);
@@ -51,7 +60,7 @@ namespace Cloud.Core.Extensions.Configuration.Tests
         }
 
         /// <summary>Ensure add value, adds a config setting as expected.</summary>
-        [Fact, IsUnit]
+        [Fact]
         public void Test_ConfigBuilder_AddValue()
         {
             // Arrange
@@ -66,7 +75,7 @@ namespace Cloud.Core.Extensions.Configuration.Tests
         }
 
         /// <summary>Ensure add multiple values, adds as expected.</summary>
-        [Fact, IsUnit]
+        [Fact]
         public void Test_ConfigBuilder_AddValues()
         {
             // Arrange
@@ -90,7 +99,7 @@ namespace Cloud.Core.Extensions.Configuration.Tests
         }
 
         /// <summary>Ensure wrong keys don't return values.</summary>
-        [Fact, IsUnit]
+        [Fact]
         public void Test_ConfigBuilder_TryGetValue_FailWithWrongKey()
         {
             // Arrange
@@ -102,7 +111,7 @@ namespace Cloud.Core.Extensions.Configuration.Tests
         }
 
         /// <summary>Ensure trying to get a value using a null key returns false for TryGet.</summary>
-        [Fact, IsUnit]
+        [Fact]
         public void Test_ConfigBuilder_TryGetValue_FailWithNullKey()
         {
             // Arrange
@@ -114,7 +123,7 @@ namespace Cloud.Core.Extensions.Configuration.Tests
         }
 
         /// <summary>Ensure TryGet returns expected value and successful flag.</summary>
-        [Fact, IsUnit]
+        [Fact]
         public void Test_ConfigBuilder_TryGetValue()
         {
             IConfiguration configBuilder = new ConfigurationBuilder().UseDefaultConfigs().Build();
@@ -295,11 +304,20 @@ namespace Cloud.Core.Extensions.Configuration.Tests
             lookupResult2.Should().Be("testVal2");
         }
 
+
         private class TestSettings
         {
             public string TestKey1 { get; set; }
             public string TestKey2 { get; set; }
+            public string TestKey3 { get; set; }
+            public string TestKey4 { get; set; }
+            public SubClass SubProp { get; set; }
         }
 
+        private class SubClass
+        {
+            public string SubKey1 { get; set; }
+            public string SubKey2 { get; set; }
+        }
     }
 }
