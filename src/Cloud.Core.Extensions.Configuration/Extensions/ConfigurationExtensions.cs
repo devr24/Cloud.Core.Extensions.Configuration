@@ -221,6 +221,28 @@
         }
 
         /// <summary>
+        /// Override a configuration setting based on an environment variable's value. For example, if `envVarName` was 
+        /// `ASPNETCORE_ENVIRONMENT`, and the `envVariableMatch` was `Development`, override the configuration key with 
+        /// the name `configKey` with the value of `overrideValue`.
+        /// Useful if you want to override a param in a development environment.
+        /// </summary>
+        /// <param name="config">ConfigurationBuilder</param>
+        /// <param name="envVariableName">Environment variable to lookup.</param>
+        /// <param name="envVariableMatch">The environment variable value to match on.</param>
+        /// <param name="configKey">The config key you wish to override.</param>
+        /// <param name="overrideValue">The config value you wish to set.</param>
+        /// <returns>ConfigurationBuilder that has been updated.</returns>
+        public static IConfigurationBuilder AddEnvironmentOverride(this IConfigurationBuilder config, string envVariableName, string envVariableMatch, string configKey, string overrideValue)
+        {
+            var env = Environment.GetEnvironmentVariable(envVariableName);
+            if (env == envVariableMatch)
+            {
+                config.AddValue("JwtSecret", config.GetValue<string>("Jwt:Secret"));
+            }
+            return config;
+        }
+
+        /// <summary>
         /// Internal method for generating all key values.
         /// </summary>
         /// <param name="rootConfig">The root configuration to get flattened configuration for.</param>
