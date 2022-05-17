@@ -237,7 +237,7 @@
             var env = Environment.GetEnvironmentVariable(envVariableName);
             if (env == envVariableMatch)
             {
-                config.AddValue("JwtSecret", config.GetValue<string>("Jwt:Secret"));
+                config.AddValue(configKey, config.GetValue<string>(overrideValue));
             }
             return config;
         }
